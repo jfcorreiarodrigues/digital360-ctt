@@ -1,0 +1,125 @@
+[
+  {
+    "id": "demo-4t2024",
+    "name": "Digital 360 — Estado da Arte 4T2024",
+    "type": "quarterly",
+    "period": "4T2024",
+    "audience": "B2B",
+    "sessionDate": "2025-01-30",
+    "createdAt": "2025-01-10T09:00:00Z",
+    "updatedAt": "2025-01-28T16:45:00Z",
+    "status": "ready",
+    "selectedProducts": ["portal_expresso", "super_portal", "plugins_shiptimize", "ctt_now", "ctt_logistica", "criar_lojas_online", "pop", "area_cliente_correio", "ecarta", "viactt_b2b", "ctt_ads"],
+    "products": {
+      "portal_expresso": {
+        "productId": "portal_expresso",
+        "status": "submitted",
+        "completedAt": "2025-01-20T09:00:00Z",
+        "completedBy": "Equipa CTT Expresso Digital",
+        "northStar": {
+          "metric": "Receita Total",
+          "currentValue": "129 551 297 €",
+          "previousValue": "121 047 898 €",
+          "variation": "+7%",
+          "periodLabel": "2024 vs 2023",
+          "executiveHighlight": "Crescimento sustentado de 7% face a 2023, suportado pela consolidação do canal Web Services e forte performance do segmento Customer Shipping."
+        },
+        "revenue": {
+          "total": "129 551 297 €",
+          "totalVariation": "+7%",
+          "breakdown": [
+            { "label": "Customer Shipping (CS)", "value": "78 M€", "share": "60%", "variation": "+9%" },
+            { "label": "Aplicação Própria (AP)", "value": "18 M€", "share": "14%", "variation": "+3%" },
+            { "label": "Portal CTT Expresso (PT)", "value": "12 M€", "share": "9%", "variation": "+5%" },
+            { "label": "Web Services (WS)", "value": "15 M€", "share": "12%", "variation": "+12%" },
+            { "label": "Plugins (PLG)", "value": "6.5 M€", "share": "5%", "variation": "+18%" }
+          ],
+          "notes": "WS e PLG com crescimento acima da média. CS mantém-se o canal dominante."
+        },
+        "traffic": {
+          "totalSessions": "4.2 M",
+          "totalSessionsVariation": "+11%",
+          "totalUsers": "285 000",
+          "totalUsersVariation": "+8%",
+          "breakdown": [
+            { "channel": "Direto", "value": "1.8 M", "share": "43%" },
+            { "channel": "Orgânico", "value": "1.1 M", "share": "26%" },
+            { "channel": "Paid", "value": "0.8 M", "share": "19%" },
+            { "channel": "Email", "value": "0.5 M", "share": "12%" }
+          ],
+          "notes": "Canal direto reforçado pelo crescimento da base de clientes recorrentes."
+        },
+        "marketing": {
+          "googleAlwaysOnInvestment": "180 000",
+          "googleAlwaysOnPercentOfTotal": "62",
+          "campaigns": [
+            { "name": "Campanha Black Friday B2B", "type": "google", "date": "Nov 2024", "result": "+22% CTR vs target", "status": "completed" },
+            { "name": "Email Reativação Clientes Inativos", "type": "email", "date": "Out 2024", "result": "4.2% conversão", "status": "completed" }
+          ],
+          "highlights": "Q4 marcado pela campanha Black Friday com desempenho acima do benchmark. Email de reativação gerou 4.2% de conversão."
+        },
+        "productDev": {
+          "features": [
+            { "title": "Novo dashboard de analytics", "description": "Relatórios em tempo real para clientes enterprise", "status": "completed" },
+            { "title": "API v3 — Rastreio avançado", "description": "Endpoints de rastreio com granularidade ao minuto", "status": "completed" },
+            { "title": "Módulo de faturação self-service", "description": "Portal de faturação integrado no portal", "status": "wip" }
+          ],
+          "blockers": "Dependência de integração com sistema legado de faturação atrasou o módulo self-service.",
+          "notes": ""
+        },
+        "lookingForward": {
+          "nextPeriod": "1T2025",
+          "initiatives": [
+            { "title": "Lançamento módulo faturação", "description": "Go-live do módulo self-service de faturação", "priority": "high" },
+            { "title": "App mobile para gestores de frota", "description": "MVP da app de gestão para grandes clientes B2B", "priority": "medium" },
+            { "title": "Integração Shopify B2B", "description": "Connector nativo para merchants Shopify", "priority": "medium" }
+          ],
+          "risks": "Restrições de recursos técnicos podem atrasar o lançamento da app mobile."
+        }
+      },
+      "super_portal": {
+        "productId": "super_portal",
+        "status": "submitted",
+        "completedAt": "2025-01-22T11:00:00Z",
+        "completedBy": "Equipa Super Portal",
+        "northStar": {
+          "metric": "Contratos Concluídos",
+          "currentValue": "3 279",
+          "previousValue": "1 568",
+          "variation": "+109% YoY (Dez)",
+          "periodLabel": "4T2024 vs 4T2023",
+          "executiveHighlight": "Crescimento explosivo de 109% nos contratos concluídos em dezembro. O Super Portal consolida-se como motor de crescimento B2B com aceleração notável no Q4."
+        },
+        "revenue": {
+          "total": "191 416 €",
+          "totalVariation": "+75% YoT12",
+          "breakdown": [
+            { "label": "Receita Total Portal", "value": "191 416 €", "share": "100%", "variation": "+75%" },
+            { "label": "Portal Expresso", "value": "168 000 €", "share": "88%", "variation": "+70%" },
+            { "label": "Plugins", "value": "23 416 €", "share": "12%", "variation": "+120%" }
+          ],
+          "notes": "Componente Plugins com crescimento excepcional impulsionado por onboarding de integradores."
+        },
+        "traffic": {
+          "totalSessions": "89 400",
+          "totalSessionsVariation": "+45%",
+          "totalUsers": "12 300",
+          "totalUsersVariation": "+38%"
+        },
+        "productDev": {
+          "features": [
+            { "title": "Fluxo de onboarding simplificado", "description": "Redução de 12 para 4 passos no processo de contratação", "status": "completed" },
+            { "title": "Assinatura digital de contratos", "description": "Integração com DocuSign para contratos 100% digitais", "status": "completed" }
+          ]
+        },
+        "lookingForward": {
+          "nextPeriod": "1T2025",
+          "initiatives": [
+            { "title": "Portal self-service para gestão de contrato", "description": "Área de cliente para gerir e alterar contratos activos", "priority": "high" },
+            { "title": "Expansão para PMEs", "description": "Campanha de captação direcionada a PMEs", "priority": "high" }
+          ]
+        }
+      }
+    }
+  }
+]
