@@ -14,122 +14,173 @@ function toDbRow(body) {
 
 // GET all sessions
 router.get('/', async (req, res) => {
-  const { data, error } = await supabase
-    .from('sessions')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data.map(toSession));
+  try {
+    const { data, error } = await supabase
+      .from('sessions')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data.map(toSession));
+  } catch (err) {
+    console.error('GET /sessions error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
 });
 
 // POST create session
 router.post('/', async (req, res) => {
-  const row = toDbRow(req.body);
-  const { data, error } = await supabase
-    .from('sessions')
-    .insert({ status: 'draft', products: {}, selected_products: [], ...row })
-    .select()
-    .single();
-  if (error) return res.status(500).json({ error: error.message });
-  res.status(201).json(toSession(data));
+  try {
+    const { name } = req.body;
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ error: 'O campo "name" é obrigatório.' });
+    }
+    const row = toDbRow(req.body);
+    const { data, error } = await supabase
+      .from('sessions')
+      .insert({ status: 'draft', products: {}, selected_products: [], ...row })
+      .select()
+      .single();
+    if (error) return res.status(500).json({ error: error.message });
+    res.status(201).json(toSession(data));
+  } catch (err) {
+    console.error('POST /sessions error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
 });
 
 // GET single session
 router.get('/:id', async (req, res) => {
-  const { data, error } = await supabase
-    .from('sessions')
-    .select('*')
-    .eq('id', req.params.id)
-    .single();
-  if (error) return res.status(404).json({ error: 'Session not found' });
-  res.json(toSession(data));
+  try {
+    const { data, error } = await supabase
+      .from('sessions')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
+    if (error) return res.status(404).json({ error: 'Sessão não encontrada.' });
+    res.json(toSession(data));
+  } catch (err) {
+    console.error('GET /sessions/:id error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
 });
 
 // PUT update session
 router.put('/:id', async (req, res) => {
-  const row = toDbRow(req.body);
-  const { data, error } = await supabase
-    .from('sessions')
-    .update({ ...row, updated_at: new Date().toISOString() })
-    .eq('id', req.params.id)
-    .select()
-    .single();
-  if (error) return res.status(404).json({ error: 'Session not found' });
-  res.json(toSession(data));
+  try {
+    const row = toDbRow(req.body);
+    const { data, error } = await supabase
+      .from('sessions')
+      .update({ ...row, updated_at: new Date().toISOString() })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+    if (error) return res.status(404).json({ error: 'Sessão não encontrada.' });
+    res.json(toSession(data));
+  } catch (err) {
+    console.error('PUT /sessions/:id error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
 });
 
 // DELETE session
 router.delete('/:id', async (req, res) => {
-  const { error } = await supabase.from('sessions').delete().eq('id', req.params.id);
-  if (error) return res.status(404).json({ error: 'Session not found' });
-  res.status(204).send();
+  try {
+    const { error, count } = await supabase
+      .from('sessions')
+      .delete({ count: 'exact' })
+      .eq('id', req.params.id);
+    if (error) return res.status(500).json({ error: error.message });
+    if (count === 0) return res.status(404).json({ error: 'Sessão não encontrada.' });
+    res.status(204).send();
+  } catch (err) {
+    console.error('DELETE /sessions/:id error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
 });
 
 // GET product data
 router.get('/:id/products/:productId', async (req, res) => {
-  const { data, error } = await supabase
-    .from('sessions')
-    .select('products')
-    .eq('id', req.params.id)
-    .single();
-  if (error) return res.status(404).json({ error: 'Session not found' });
-  res.json(data.products?.[req.params.productId] || {});
+  try {
+    const { data, error } = await supabase
+      .from('sessions')
+      .select('products')
+      .eq('id', req.params.id)
+      .single();
+    if (error) return res.status(404).json({ error: 'Sessão não encontrada.' });
+    res.json(data.products?.[req.params.productId] || {});
+  } catch (err) {
+    console.error('GET /sessions/:id/products/:productId error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
 });
 
 // PUT update product data
 router.put('/:id/products/:productId', async (req, res) => {
-  const { data: session, error: fetchErr } = await supabase
-    .from('sessions')
-    .select('products')
-    .eq('id', req.params.id)
-    .single();
-  if (fetchErr) return res.status(404).json({ error: 'Session not found' });
+  try {
+    const { data: session, error: fetchErr } = await supabase
+      .from('sessions')
+      .select('products')
+      .eq('id', req.params.id)
+      .single();
+    if (fetchErr) return res.status(404).json({ error: 'Sessão não encontrada.' });
 
-  const updatedProducts = {
-    ...session.products,
-    [req.params.productId]: {
-      ...session.products?.[req.params.productId],
-      ...req.body,
-      productId: req.params.productId
-    }
-  };
+    const updatedProducts = {
+      ...session.products,
+      [req.params.productId]: {
+        ...session.products?.[req.params.productId],
+        ...req.body,
+        productId: req.params.productId
+      }
+    };
 
-  const { data, error } = await supabase
-    .from('sessions')
-    .update({ products: updatedProducts, updated_at: new Date().toISOString() })
-    .eq('id', req.params.id)
-    .select('products')
-    .single();
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data.products[req.params.productId]);
+    const { data, error } = await supabase
+      .from('sessions')
+      .update({ products: updatedProducts, updated_at: new Date().toISOString() })
+      .eq('id', req.params.id)
+      .select('products')
+      .single();
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data.products[req.params.productId]);
+  } catch (err) {
+    console.error('PUT /sessions/:id/products/:productId error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
 });
 
 // PATCH product status
 router.patch('/:id/products/:productId/status', async (req, res) => {
-  const { data: session, error: fetchErr } = await supabase
-    .from('sessions')
-    .select('products')
-    .eq('id', req.params.id)
-    .single();
-  if (fetchErr) return res.status(404).json({ error: 'Session not found' });
+  try {
+    const { status, completedBy } = req.body;
+    if (!status) return res.status(400).json({ error: 'O campo "status" é obrigatório.' });
 
-  const product = { ...(session.products?.[req.params.productId] || {}) };
-  product.status = req.body.status;
-  if (req.body.status === 'submitted') {
-    product.completedAt = new Date().toISOString();
-    product.completedBy = req.body.completedBy || '';
+    const { data: session, error: fetchErr } = await supabase
+      .from('sessions')
+      .select('products')
+      .eq('id', req.params.id)
+      .single();
+    if (fetchErr) return res.status(404).json({ error: 'Sessão não encontrada.' });
+
+    const product = { ...(session.products?.[req.params.productId] || {}) };
+    product.status = status;
+    if (status === 'submitted') {
+      product.completedAt = new Date().toISOString();
+      product.completedBy = completedBy || '';
+    }
+
+    const updatedProducts = { ...session.products, [req.params.productId]: product };
+
+    const { data, error } = await supabase
+      .from('sessions')
+      .update({ products: updatedProducts, updated_at: new Date().toISOString() })
+      .eq('id', req.params.id)
+      .select('products')
+      .single();
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data.products[req.params.productId]);
+  } catch (err) {
+    console.error('PATCH /sessions/:id/products/:productId/status error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
   }
-
-  const updatedProducts = { ...session.products, [req.params.productId]: product };
-
-  const { data, error } = await supabase
-    .from('sessions')
-    .update({ products: updatedProducts, updated_at: new Date().toISOString() })
-    .eq('id', req.params.id)
-    .select('products')
-    .single();
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data.products[req.params.productId]);
 });
 
 export default router;

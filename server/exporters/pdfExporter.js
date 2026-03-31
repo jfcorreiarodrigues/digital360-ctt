@@ -1,21 +1,23 @@
 import { generateHTML } from './htmlExporter.js';
 
 async function getBrowser() {
-  // Vercel / serverless: use @sparticuz/chromium-min with puppeteer-core
+  // Vercel / serverless: use @sparticuz/chromium-min com puppeteer-core
   if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const remoteExecPath = process.env.CHROMIUM_REMOTE_EXEC_PATH;
+    if (!remoteExecPath) {
+      throw new Error('CHROMIUM_REMOTE_EXEC_PATH não está definido. Necessário em ambiente serverless.');
+    }
     const chromium = (await import('@sparticuz/chromium-min')).default;
     const puppeteer = (await import('puppeteer-core')).default;
     return puppeteer.launch({
       args: chromium.args,
-      executablePath: await chromium.executablePath(
-        'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
-      ),
+      executablePath: await chromium.executablePath(remoteExecPath),
       headless: chromium.headless,
     });
   }
 
-  // Local development: use puppeteer-core with system Chrome
-  // Set CHROMIUM_PATH to your Chrome/Chromium binary, e.g.:
+  // Desenvolvimento local: usar puppeteer-core com Chrome do sistema
+  // Definir CHROMIUM_PATH no .env, ex:
   //   macOS: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
   //   Linux: /usr/bin/chromium-browser
   const puppeteer = (await import('puppeteer-core')).default;

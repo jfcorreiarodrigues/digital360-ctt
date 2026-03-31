@@ -1,8 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('FATAL: SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY são obrigatórios.');
+  process.exit(1);
+}
+
+// Usar a service_role key no servidor para bypass seguro do RLS.
+// NUNCA expor esta chave no frontend.
 export const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 // Map Supabase snake_case fields to camelCase expected by the frontend
