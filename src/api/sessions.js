@@ -6,28 +6,22 @@ const STORAGE_KEY = 'digital360_sessions';
 function getSessions() {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    console.log('[v0] getSessions - raw data:', data);
     return data ? JSON.parse(data) : [];
   } catch (e) {
-    console.error('[v0] getSessions error:', e);
     return [];
   }
 }
 
 function saveSessions(sessions) {
   try {
-    console.log('[v0] saveSessions - saving:', sessions);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
   } catch (e) {
-    console.error('[v0] saveSessions error:', e);
+    // ignore
   }
 }
 
 export async function fetchAllSessions() {
-  console.log('[v0] fetchAllSessions called');
-  const sessions = getSessions();
-  console.log('[v0] fetchAllSessions returning:', sessions);
-  return sessions;
+  return getSessions();
 }
 
 export async function fetchSessionById(id) {
@@ -36,7 +30,6 @@ export async function fetchSessionById(id) {
 }
 
 export async function createNewSession(data) {
-  console.log('[v0] createNewSession called with:', data);
   const sessions = getSessions();
   const newSession = {
     id: crypto.randomUUID(),
@@ -45,10 +38,8 @@ export async function createNewSession(data) {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  console.log('[v0] createNewSession - new session:', newSession);
   sessions.push(newSession);
   saveSessions(sessions);
-  console.log('[v0] createNewSession - session created successfully');
   return newSession;
 }
 
