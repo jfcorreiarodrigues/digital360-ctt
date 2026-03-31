@@ -14,9 +14,14 @@ async function getBrowser() {
     });
   }
 
-  // Local development: use full puppeteer
-  const puppeteer = (await import('puppeteer')).default;
+  // Local development: use puppeteer-core with system Chrome
+  // Set CHROMIUM_PATH to your Chrome/Chromium binary, e.g.:
+  //   macOS: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+  //   Linux: /usr/bin/chromium-browser
+  const puppeteer = (await import('puppeteer-core')).default;
+  const executablePath = process.env.CHROMIUM_PATH || '/usr/bin/chromium-browser';
   return puppeteer.launch({
+    executablePath,
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
