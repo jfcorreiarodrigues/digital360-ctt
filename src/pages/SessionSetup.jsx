@@ -47,12 +47,20 @@ export function SessionSetup() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.name || !form.period || form.selectedProducts.length === 0) return;
+    console.log('[v0] handleSubmit called');
+    console.log('[v0] form state:', form);
+    if (!form.name || !form.period || form.selectedProducts.length === 0) {
+      console.log('[v0] validation failed - name:', form.name, 'period:', form.period, 'products:', form.selectedProducts.length);
+      return;
+    }
+    console.log('[v0] validation passed, creating session...');
     const session = await createSession({
       ...form,
       products: Object.fromEntries(form.selectedProducts.map(id => [id, { productId: id, status: 'draft' }]))
     });
+    console.log('[v0] session created:', session);
     if (session) {
+      console.log('[v0] navigating to:', `/session/${session.id}/product/${form.selectedProducts[0]}`);
       navigate(`/session/${session.id}/product/${form.selectedProducts[0]}`);
     }
   }
