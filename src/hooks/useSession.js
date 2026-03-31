@@ -9,6 +9,7 @@ export function useSession() {
 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.get(API);
       return res.data;
@@ -22,6 +23,7 @@ export function useSession() {
 
   const fetchSession = useCallback(async (id) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.get(`${API}/${id}`);
       return res.data;
@@ -35,6 +37,7 @@ export function useSession() {
 
   const createSession = useCallback(async (data) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await axios.post(API, data);
       return res.data;
@@ -47,6 +50,7 @@ export function useSession() {
   }, []);
 
   const updateSession = useCallback(async (id, data) => {
+    setError(null);
     try {
       const res = await axios.put(`${API}/${id}`, data);
       return res.data;
@@ -57,6 +61,7 @@ export function useSession() {
   }, []);
 
   const deleteSession = useCallback(async (id) => {
+    setError(null);
     try {
       await axios.delete(`${API}/${id}`);
       return true;
@@ -67,6 +72,7 @@ export function useSession() {
   }, []);
 
   const saveProductData = useCallback(async (sessionId, productId, data) => {
+    setError(null);
     try {
       const res = await axios.put(`${API}/${sessionId}/products/${productId}`, data);
       return res.data;
@@ -77,6 +83,7 @@ export function useSession() {
   }, []);
 
   const updateProductStatus = useCallback(async (sessionId, productId, status, completedBy = '') => {
+    setError(null);
     try {
       const res = await axios.patch(`${API}/${sessionId}/products/${productId}/status`, { status, completedBy });
       return res.data;

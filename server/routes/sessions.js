@@ -3,6 +3,15 @@ import { supabase, toSession } from '../lib/supabase.js';
 
 const router = express.Router();
 
+// Map camelCase request body to snake_case DB columns
+function toDbRow(body) {
+  const { sessionDate, selectedProducts, createdAt, updatedAt, ...rest } = body;
+  const row = { ...rest };
+  if (sessionDate !== undefined) row.session_date = sessionDate;
+  if (selectedProducts !== undefined) row.selected_products = selectedProducts;
+  return row;
+}
+
 // GET all sessions
 router.get('/', async (req, res) => {
   const { data, error } = await supabase
@@ -15,9 +24,10 @@ router.get('/', async (req, res) => {
 
 // POST create session
 router.post('/', async (req, res) => {
+  const row = toDbRow(req.body);
   const { data, error } = await supabase
     .from('sessions')
-    .insert({ status: 'draft', products: {}, ...req.body })
+    .insert({ status: 'draft', products: {}, selected_products: [], ...row })
     .select()
     .single();
   if (error) return res.status(500).json({ error: error.message });
@@ -37,9 +47,10 @@ router.get('/:id', async (req, res) => {
 
 // PUT update session
 router.put('/:id', async (req, res) => {
+  const row = toDbRow(req.body);
   const { data, error } = await supabase
     .from('sessions')
-    .update({ ...req.body, updated_at: new Date().toISOString() })
+    .update({ ...row, updated_at: new Date().toISOString() })
     .eq('id', req.params.id)
     .select()
     .single();
