@@ -41,6 +41,7 @@ export function useSession() {
 
   const createSession = useCallback(async (data) => {
     setLoading(true);
+    setError(null);
     try {
       const session = await createNewSession(data);
       return session;
