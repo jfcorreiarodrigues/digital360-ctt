@@ -28,6 +28,7 @@ export function ProductForm() {
   const [activeTab, setActiveTab] = useState('northstar');
   const [saveStatus, setSaveStatus] = useState('idle'); // idle | saving | saved | error
   const [isSaving, setIsSaving] = useState(false);
+  const isSavingRef = useRef(false);
   const saveTimer = useRef(null);
   const pendingSave = useRef(false);
 
@@ -40,14 +41,17 @@ export function ProductForm() {
     });
   }, [sessionId, productId]);
 
+  // Cleanup timer on unmount to avoid state updates on unmounted component
+  useEffect(() => () => clearTimeout(saveTimer.current), []);
+
   const save = useCallback(async (data) => {
-    if (isSaving) { pendingSave.current = true; return; }
+    if (isSavingRef.current) { pendingSave.current = true; return; }
+    isSavingRef.current = true;
     setIsSaving(true);
     setSaveStatus('saving');
     try {
       await saveProductData(sessionId, productId, data);
       setSaveStatus('saved');
-      // Update local session state
       setSession(prev => prev ? {
         ...prev,
         products: { ...prev.products, [productId]: { ...prev.products?.[productId], ...data } }
@@ -55,13 +59,14 @@ export function ProductForm() {
     } catch {
       setSaveStatus('error');
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
       if (pendingSave.current) {
         pendingSave.current = false;
         save(data);
       }
     }
-  }, [sessionId, productId, isSaving]);
+  }, [sessionId, productId]);
 
   function handleChange(key, val) {
     const updated = { ...productData, [key]: val };

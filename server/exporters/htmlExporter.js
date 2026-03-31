@@ -1,9 +1,13 @@
+function esc(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 export async function generateHTML(session, forPDF = false) {
   const products = Object.entries(session.products || {});
   const dateStr = new Date().toLocaleDateString('pt-PT', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const productSections = products.map(([pid, pd]) => {
-    const name = pid.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const name = esc(pid.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
     const ns = pd.northStar || {};
     const rev = pd.revenue || {};
     const traf = pd.traffic || {};
@@ -20,34 +24,34 @@ export async function generateHTML(session, forPDF = false) {
 
     const statusBadge = (s) => {
       const map = { draft: '#9CA3AF', submitted: '#10B981', approved: '#3B82F6' };
-      return `<span style="background:${map[s] || '#9CA3AF'};color:white;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:600">${s || 'draft'}</span>`;
+      return `<span style="background:${map[s] || '#9CA3AF'};color:white;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:600">${esc(s) || 'draft'}</span>`;
     };
 
     const revBreakdown = (rev.breakdown || []).filter(r => r.label).map(r => `
       <tr>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${r.label}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6;font-weight:600">${r.value || '—'}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${r.share || '—'}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6;color:${varColor(r.variation)};font-weight:600">${r.variation || '—'}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${esc(r.label)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6;font-weight:600">${esc(r.value) || '—'}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${esc(r.share) || '—'}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6;color:${varColor(r.variation)};font-weight:600">${esc(r.variation) || '—'}</td>
       </tr>`).join('');
 
     const campaigns = (mkt.campaigns || []).filter(c => c.name).map(c => `
       <tr>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${c.name}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${c.type || ''}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${c.date || ''}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${c.result || ''}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${c.status || ''}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${esc(c.name)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${esc(c.type)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${esc(c.date)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${esc(c.result)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #F3F4F6">${esc(c.status)}</td>
       </tr>`).join('');
 
     const features = (dev.features || []).filter(f => f.title).map(f => {
       const icon = f.status === 'completed' ? '✅' : f.status === 'wip' ? '🔄' : '⚠️';
-      return `<li style="margin:6px 0">${icon} <strong>${f.title}</strong>${f.description ? ` — ${f.description}` : ''}</li>`;
+      return `<li style="margin:6px 0">${icon} <strong>${esc(f.title)}</strong>${f.description ? ` — ${esc(f.description)}` : ''}</li>`;
     }).join('');
 
     const initiatives = (fwd.initiatives || []).filter(i => i.title).map(init => {
       const icon = init.priority === 'high' ? '🔴' : init.priority === 'medium' ? '🟡' : '🟢';
-      return `<li style="margin:6px 0">${icon} <strong>${init.title}</strong>${init.description ? ` — ${init.description}` : ''}</li>`;
+      return `<li style="margin:6px 0">${icon} <strong>${esc(init.title)}</strong>${init.description ? ` — ${esc(init.description)}` : ''}</li>`;
     }).join('');
 
     return `
@@ -62,27 +66,27 @@ export async function generateHTML(session, forPDF = false) {
 
       <div style="padding:24px 32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
         <div style="background:#F9FAFB;border-left:4px solid #DF0024;padding:16px;border-radius:4px">
-          <div style="font-size:11px;color:#6B7280;margin-bottom:4px">${ns.metric || 'North Star'}</div>
-          <div style="font-size:28px;font-weight:700;color:#111827">${ns.currentValue || '—'}</div>
-          <div style="font-size:14px;font-weight:600;color:${varColor(ns.variation)}">${ns.variation || ''}</div>
-          <div style="font-size:10px;color:#9CA3AF">${ns.periodLabel || ''}</div>
+          <div style="font-size:11px;color:#6B7280;margin-bottom:4px">${esc(ns.metric) || 'North Star'}</div>
+          <div style="font-size:28px;font-weight:700;color:#111827">${esc(ns.currentValue) || '—'}</div>
+          <div style="font-size:14px;font-weight:600;color:${varColor(ns.variation)}">${esc(ns.variation)}</div>
+          <div style="font-size:10px;color:#9CA3AF">${esc(ns.periodLabel)}</div>
         </div>
         <div style="background:#F9FAFB;border-left:4px solid #DF0024;padding:16px;border-radius:4px">
           <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Receita Total</div>
-          <div style="font-size:28px;font-weight:700;color:#111827">${rev.total || '—'}</div>
-          <div style="font-size:14px;font-weight:600;color:${varColor(rev.totalVariation)}">${rev.totalVariation || ''}</div>
+          <div style="font-size:28px;font-weight:700;color:#111827">${esc(rev.total) || '—'}</div>
+          <div style="font-size:14px;font-weight:600;color:${varColor(rev.totalVariation)}">${esc(rev.totalVariation)}</div>
         </div>
         <div style="background:#F9FAFB;border-left:4px solid #DF0024;padding:16px;border-radius:4px">
           <div style="font-size:11px;color:#6B7280;margin-bottom:4px">Sessões Totais</div>
-          <div style="font-size:28px;font-weight:700;color:#111827">${traf.totalSessions || '—'}</div>
-          <div style="font-size:14px;font-weight:600;color:${varColor(traf.totalSessionsVariation)}">${traf.totalSessionsVariation || ''}</div>
+          <div style="font-size:28px;font-weight:700;color:#111827">${esc(traf.totalSessions) || '—'}</div>
+          <div style="font-size:14px;font-weight:600;color:${varColor(traf.totalSessionsVariation)}">${esc(traf.totalSessionsVariation)}</div>
         </div>
       </div>
 
       ${ns.executiveHighlight ? `
       <div style="margin:0 32px 16px;background:#FFF5F7;border-left:4px solid #DF0024;padding:14px 18px;border-radius:4px">
         <div style="font-size:10px;font-weight:700;color:#DF0024;margin-bottom:4px">DESTAQUE EXECUTIVO</div>
-        <div style="font-size:13px;color:#111827">${ns.executiveHighlight}</div>
+        <div style="font-size:13px;color:#111827">${esc(ns.executiveHighlight)}</div>
       </div>` : ''}
 
       <div style="padding:0 32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
@@ -132,7 +136,7 @@ export async function generateHTML(session, forPDF = false) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${session.name} — Digital 360 CTT</title>
+<title>${esc(session.name)} — Digital 360 CTT</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Arial', sans-serif; color: #111827; background: #F9FAFB; }
@@ -147,8 +151,8 @@ export async function generateHTML(session, forPDF = false) {
   <!-- Cover -->
   <div style="background:#DF0024;color:white;padding:48px 64px;min-height:200px">
     <div style="font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Estado da Arte</div>
-    <div style="font-size:42px;font-weight:700;line-height:1.1">${session.name}</div>
-    <div style="font-size:20px;opacity:0.8;margin-top:12px">${session.period || ''} · ${session.audience || ''}</div>
+    <div style="font-size:42px;font-weight:700;line-height:1.1">${esc(session.name)}</div>
+    <div style="font-size:20px;opacity:0.8;margin-top:12px">${esc(session.period)} · ${esc(session.audience)}</div>
     <div style="font-size:13px;opacity:0.6;margin-top:24px">Gerado em ${dateStr}</div>
   </div>
 
@@ -165,7 +169,7 @@ export async function generateHTML(session, forPDF = false) {
         <div style="font-size:12px;color:#6B7280">Submetidos</div>
       </div>
       <div style="text-align:center;padding:16px;background:#F9FAFB;border-radius:8px">
-        <div style="font-size:32px;font-weight:700;color:#F59E0B">${session.status || 'draft'}</div>
+        <div style="font-size:32px;font-weight:700;color:#F59E0B">${esc(session.status) || 'draft'}</div>
         <div style="font-size:12px;color:#6B7280">Status</div>
       </div>
     </div>

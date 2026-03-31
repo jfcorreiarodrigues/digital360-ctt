@@ -6,7 +6,10 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 
 function SessionCard({ session, onDelete }) {
-  const updatedAt = new Date(session.updatedAt).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' });
+  const updatedAtDate = session.updatedAt ? new Date(session.updatedAt) : null;
+  const updatedAt = updatedAtDate && !isNaN(updatedAtDate)
+    ? updatedAtDate.toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })
+    : '—';
   const totalProducts = session.selectedProducts?.length || Object.keys(session.products || {}).length;
   const submittedProducts = Object.values(session.products || {}).filter(p => p.status === 'submitted').length;
 

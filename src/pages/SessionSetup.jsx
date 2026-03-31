@@ -7,7 +7,7 @@ import { PRODUCT_GROUPS, PERIODS } from '../constants/products';
 
 export function SessionSetup() {
   const navigate = useNavigate();
-  const { createSession, loading } = useSession();
+  const { createSession, loading, error } = useSession();
   const [form, setForm] = useState({
     name: '',
     period: '',
@@ -65,6 +65,12 @@ export function SessionSetup() {
           <h1 className="text-3xl font-bold text-ctt-gray-900">Configurar sessão</h1>
           <p className="text-sm text-ctt-gray-500 mt-1">Define os parâmetros da sessão e seleciona os produtos a incluir.</p>
         </div>
+
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+            ⚠️ Erro ao criar sessão: {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="bg-white rounded-2xl border border-ctt-gray-100 shadow-card p-6 space-y-4">

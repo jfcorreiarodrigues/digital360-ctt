@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../lib/api.js';
 
 export function useExport() {
   const [loading, setLoading] = useState({});
@@ -20,7 +20,7 @@ export function useExport() {
     setLoading(prev => ({ ...prev, pptx: true }));
     setError(null);
     try {
-      const res = await axios.post(`/api/export/pptx/${sessionId}`, {}, { responseType: 'blob' });
+      const res = await api.post(`/api/export/pptx/${sessionId}`, {}, { responseType: 'blob' });
       await downloadBlob(res.data, `Digital360_${sessionName || sessionId}.pptx`);
     } catch (e) {
       setError('Erro ao gerar PPTX: ' + e.message);
@@ -33,7 +33,7 @@ export function useExport() {
     setLoading(prev => ({ ...prev, pdf: true }));
     setError(null);
     try {
-      const res = await axios.post(`/api/export/pdf/${sessionId}`, {}, { responseType: 'blob' });
+      const res = await api.post(`/api/export/pdf/${sessionId}`, {}, { responseType: 'blob' });
       await downloadBlob(res.data, `Digital360_${sessionName || sessionId}.pdf`);
     } catch (e) {
       setError('Erro ao gerar PDF: ' + e.message);
@@ -46,7 +46,7 @@ export function useExport() {
     setLoading(prev => ({ ...prev, html: true }));
     setError(null);
     try {
-      const res = await axios.get(`/api/export/html/${sessionId}`, { responseType: 'blob' });
+      const res = await api.get(`/api/export/html/${sessionId}`, { responseType: 'blob' });
       await downloadBlob(res.data, `Digital360_${sessionName || sessionId}.html`);
     } catch (e) {
       setError('Erro ao gerar HTML: ' + e.message);
