@@ -1,7 +1,13 @@
 import { useState, useCallback } from 'react';
-import axios from 'axios';
-
-const API = '/api/sessions';
+import {
+  fetchAllSessions,
+  fetchSessionById,
+  createNewSession,
+  updateExistingSession,
+  deleteExistingSession,
+  saveProductDataToSession,
+  updateProductStatusInSession
+} from '../api/sessions';
 
 export function useSession() {
   const [loading, setLoading] = useState(false);
@@ -10,8 +16,8 @@ export function useSession() {
   const fetchSessions = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get(API);
-      return res.data;
+      const sessions = await fetchAllSessions();
+      return sessions;
     } catch (e) {
       setError(e.message);
       return [];
@@ -23,8 +29,8 @@ export function useSession() {
   const fetchSession = useCallback(async (id) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API}/${id}`);
-      return res.data;
+      const session = await fetchSessionById(id);
+      return session;
     } catch (e) {
       setError(e.message);
       return null;
@@ -36,8 +42,8 @@ export function useSession() {
   const createSession = useCallback(async (data) => {
     setLoading(true);
     try {
-      const res = await axios.post(API, data);
-      return res.data;
+      const session = await createNewSession(data);
+      return session;
     } catch (e) {
       setError(e.message);
       return null;
@@ -48,8 +54,8 @@ export function useSession() {
 
   const updateSession = useCallback(async (id, data) => {
     try {
-      const res = await axios.put(`${API}/${id}`, data);
-      return res.data;
+      const session = await updateExistingSession(id, data);
+      return session;
     } catch (e) {
       setError(e.message);
       return null;
@@ -58,7 +64,7 @@ export function useSession() {
 
   const deleteSession = useCallback(async (id) => {
     try {
-      await axios.delete(`${API}/${id}`);
+      await deleteExistingSession(id);
       return true;
     } catch (e) {
       setError(e.message);
@@ -68,8 +74,8 @@ export function useSession() {
 
   const saveProductData = useCallback(async (sessionId, productId, data) => {
     try {
-      const res = await axios.put(`${API}/${sessionId}/products/${productId}`, data);
-      return res.data;
+      const session = await saveProductDataToSession(sessionId, productId, data);
+      return session;
     } catch (e) {
       setError(e.message);
       return null;
@@ -78,8 +84,8 @@ export function useSession() {
 
   const updateProductStatus = useCallback(async (sessionId, productId, status, completedBy = '') => {
     try {
-      const res = await axios.patch(`${API}/${sessionId}/products/${productId}/status`, { status, completedBy });
-      return res.data;
+      const session = await updateProductStatusInSession(sessionId, productId, status, completedBy);
+      return session;
     } catch (e) {
       setError(e.message);
       return null;
