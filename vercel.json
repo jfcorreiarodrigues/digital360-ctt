@@ -1,17 +1,6 @@
 {
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "@vercel/node@3"
-    }
-  },
   "rewrites": [
-    { "source": "/api/sessions/:id/products/:productId/status", "destination": "/api/sessions/[id]/products/[productId]/status" },
-    { "source": "/api/sessions/:id/products/:productId", "destination": "/api/sessions/[id]/products/[productId]" },
-    { "source": "/api/sessions/:id", "destination": "/api/sessions/[id]" },
-    { "source": "/api/sessions", "destination": "/api/sessions/index" },
-    { "source": "/api/export/pptx/:id", "destination": "/api/export/pptx/[id]" },
-    { "source": "/api/export/html/:id", "destination": "/api/export/html/[id]" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
