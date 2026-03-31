@@ -1,27 +1,25 @@
 import express from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { supabase } from '../lib/supabase.js';
 import { generatePPTX } from '../exporters/pptxExporter.js';
 import { generatePDF } from '../exporters/pdfExporter.js';
 import { generateHTML } from '../exporters/htmlExporter.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DATA_FILE = path.join(__dirname, '../../data/sessions.json');
-
 const router = express.Router();
 
-function getSession(id) {
-  const data = fs.readFileSync(DATA_FILE, 'utf8');
-  const sessions = JSON.parse(data);
-  return sessions.find(s => s.id === id);
+async function getSession(id) {
+  const { data, error } = await supabase
+    .from('sessions')
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) return null;
+  return data;
 }
 
 // POST export PPTX
 router.post('/pptx/:id', async (req, res) => {
   try {
-    const session = getSession(req.params.id);
+    const session = await getSession(req.params.id);
     if (!session) return res.status(404).json({ error: 'Session not found' });
     const buffer = await generatePPTX(session);
     const filename = `Digital360_${session.period || session.name.replace(/[^a-z0-9]/gi, '_')}.pptx`;
@@ -37,7 +35,7 @@ router.post('/pptx/:id', async (req, res) => {
 // POST export PDF
 router.post('/pdf/:id', async (req, res) => {
   try {
-    const session = getSession(req.params.id);
+    const session = await getSession(req.params.id);
     if (!session) return res.status(404).json({ error: 'Session not found' });
     const buffer = await generatePDF(session);
     const filename = `Digital360_${session.period || 'export'}.pdf`;
@@ -53,7 +51,7 @@ router.post('/pdf/:id', async (req, res) => {
 // GET export HTML
 router.get('/html/:id', async (req, res) => {
   try {
-    const session = getSession(req.params.id);
+    const session = await getSession(req.params.id);
     if (!session) return res.status(404).json({ error: 'Session not found' });
     const html = await generateHTML(session);
     const filename = `Digital360_${session.period || 'dashboard'}.html`;
