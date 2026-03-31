@@ -1,9 +1,35 @@
-import puppeteer from 'puppeteer';
 import { generateHTML } from './htmlExporter.js';
+
+async function getBrowser() {
+  // Vercel / serverless: use @sparticuz/chromium-min with puppeteer-core
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const chromium = (await import('@sparticuz/chromium-min')).default;
+    const puppeteer = (await import('puppeteer-core')).default;
+    return puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(
+        'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+      ),
+      headless: chromium.headless,
+    });
+  }
+
+  // Local development: use puppeteer-core with system Chrome
+  // Set CHROMIUM_PATH to your Chrome/Chromium binary, e.g.:
+  //   macOS: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+  //   Linux: /usr/bin/chromium-browser
+  const puppeteer = (await import('puppeteer-core')).default;
+  const executablePath = process.env.CHROMIUM_PATH || '/usr/bin/chromium-browser';
+  return puppeteer.launch({
+    executablePath,
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+}
 
 export async function generatePDF(session) {
   const html = await generateHTML(session, true);
-  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  const browser = await getBrowser();
   try {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });

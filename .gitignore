@@ -6,7 +6,7 @@ dist/
 dist-ssr/
 
 # Data & uploads (local persistence — não commitar dados reais)
-data/uploads/
+data/
 
 # Environment
 .env
