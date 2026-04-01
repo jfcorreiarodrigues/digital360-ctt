@@ -3,7 +3,7 @@ export function ProgressBar({ value = 0, showLabel = true, size = 'md' }) {
   const h = size === 'sm' ? 'h-1.5' : size === 'lg' ? 'h-3' : 'h-2';
 
   let barColor;
-  if (pct === 100) barColor = 'bg-ctt-red';
+  if (pct === 100) barColor = 'bg-emerald-500';
   else if (pct >= 66) barColor = 'bg-amber-400';
   else if (pct >= 33) barColor = 'bg-amber-300';
   else barColor = 'bg-ctt-gray-200';

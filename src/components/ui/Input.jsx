@@ -2,7 +2,7 @@ export function Input({ label, value, onChange, placeholder, type = 'text', requ
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
-        <label className="text-xs font-semibold text-ctt-gray-600 uppercase tracking-wide">
+        <label className="text-xs font-medium text-ctt-gray-600">
           {label}{required && <span className="text-ctt-red ml-1">*</span>}
         </label>
       )}
@@ -13,7 +13,7 @@ export function Input({ label, value, onChange, placeholder, type = 'text', requ
         placeholder={placeholder}
         required={required}
         className={`w-full px-3 py-2 text-sm border rounded-lg bg-white text-ctt-gray-900 placeholder-ctt-gray-400
-          focus:outline-none focus:ring-2 focus:ring-ctt-red focus:border-transparent
+          focus:outline-none focus:ring-2 focus:ring-ctt-gray-400 focus:border-transparent
           transition-all duration-150
           ${error ? 'border-red-400' : 'border-ctt-gray-200'}`}
       />
@@ -27,7 +27,7 @@ export function Textarea({ label, value, onChange, placeholder, required, classN
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
-        <label className="text-xs font-semibold text-ctt-gray-600 uppercase tracking-wide">
+        <label className="text-xs font-medium text-ctt-gray-600">
           {label}{required && <span className="text-ctt-red ml-1">*</span>}
         </label>
       )}
@@ -38,7 +38,7 @@ export function Textarea({ label, value, onChange, placeholder, required, classN
         required={required}
         rows={rows}
         className="w-full px-3 py-2 text-sm border border-ctt-gray-200 rounded-lg bg-white text-ctt-gray-900 placeholder-ctt-gray-400
-          focus:outline-none focus:ring-2 focus:ring-ctt-red focus:border-transparent
+          focus:outline-none focus:ring-2 focus:ring-ctt-gray-400 focus:border-transparent
           transition-all duration-150 resize-y"
       />
       {hint && <p className="text-xs text-ctt-gray-400">{hint}</p>}
@@ -50,7 +50,7 @@ export function Select({ label, value, onChange, options, required, className = 
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
-        <label className="text-xs font-semibold text-ctt-gray-600 uppercase tracking-wide">
+        <label className="text-xs font-medium text-ctt-gray-600">
           {label}{required && <span className="text-ctt-red ml-1">*</span>}
         </label>
       )}
@@ -59,7 +59,7 @@ export function Select({ label, value, onChange, options, required, className = 
         onChange={e => onChange?.(e.target.value)}
         required={required}
         className="w-full px-3 py-2 text-sm border border-ctt-gray-200 rounded-lg bg-white text-ctt-gray-900
-          focus:outline-none focus:ring-2 focus:ring-ctt-red focus:border-transparent
+          focus:outline-none focus:ring-2 focus:ring-ctt-gray-400 focus:border-transparent
           transition-all duration-150 cursor-pointer"
       >
         {placeholder && <option value="">{placeholder}</option>}

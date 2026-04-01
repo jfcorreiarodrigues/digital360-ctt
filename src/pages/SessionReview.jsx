@@ -50,10 +50,10 @@ export function SessionReview() {
     <div className="flex-1 flex flex-col overflow-hidden">
       <Header session={session} />
       <div className="flex-1 overflow-y-auto bg-ctt-gray-50">
-        <div className="max-w-6xl mx-auto px-8 py-8">
-          <div className="flex gap-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* Main grid */}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h1 className="text-2xl font-bold text-ctt-gray-900">{session.name}</h1>
@@ -115,7 +115,7 @@ export function SessionReview() {
             </div>
 
             {/* Sidebar panel */}
-            <div className="w-72 flex-none space-y-4">
+            <div className="w-full lg:w-72 lg:flex-none space-y-4">
               {/* Status */}
               <div className="bg-white rounded-2xl border border-ctt-gray-100 shadow-card p-5">
                 <h3 className="font-bold text-sm text-ctt-gray-900 mb-3">Estado da sessão</h3>

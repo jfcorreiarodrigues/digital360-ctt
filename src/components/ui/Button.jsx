@@ -1,5 +1,5 @@
 export function Button({ children, variant = 'primary', size = 'md', onClick, disabled, type = 'button', className = '', icon }) {
-  const base = 'inline-flex items-center gap-2 font-semibold rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const base = 'inline-flex items-center gap-2 font-medium rounded transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2';
   const variants = {
     primary: 'bg-ctt-red text-white hover:bg-ctt-red-dark focus:ring-ctt-red disabled:opacity-50',
     secondary: 'bg-white text-ctt-gray-900 border border-ctt-gray-200 hover:bg-ctt-gray-50 focus:ring-ctt-gray-300',

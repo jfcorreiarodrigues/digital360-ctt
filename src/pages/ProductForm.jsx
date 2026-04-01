@@ -11,11 +11,11 @@ import { ProductDevSection } from '../components/forms/ProductDevSection';
 import { MarketingSection } from '../components/forms/MarketingSection';
 
 const TABS = [
-  { id: 'northstar', label: '🎯 North Star', key: 'northStar' },
-  { id: 'revenue', label: '💰 Receita', key: 'revenue' },
-  { id: 'traffic', label: '👥 Tráfego', key: 'traffic' },
-  { id: 'product', label: '🚀 Produto', key: 'productDev' },
-  { id: 'marketing', label: '📢 Marketing', key: 'marketing' },
+  { id: 'northstar', label: 'North Star', key: 'northStar' },
+  { id: 'revenue', label: 'Receita', key: 'revenue' },
+  { id: 'traffic', label: 'Tráfego', key: 'traffic' },
+  { id: 'product', label: 'Produto', key: 'productDev' },
+  { id: 'marketing', label: 'Marketing', key: 'marketing' },
 ];
 
 export function ProductForm() {
@@ -28,6 +28,7 @@ export function ProductForm() {
   const [activeTab, setActiveTab] = useState('northstar');
   const [saveStatus, setSaveStatus] = useState('idle'); // idle | saving | saved | error
   const [isSaving, setIsSaving] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isSavingRef = useRef(false);
   const saveTimer = useRef(null);
   const pendingSave = useRef(false);
@@ -114,31 +115,40 @@ export function ProductForm() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <Header session={session} />
+      <Header session={session} onMenuClick={() => setSidebarOpen(true)} />
       <div className="flex-1 flex overflow-hidden">
-        <Sidebar session={session} currentProductId={productId} />
+        <Sidebar
+          session={session}
+          currentProductId={productId}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
         <main className="flex-1 flex flex-col overflow-hidden bg-ctt-gray-50">
           {/* Product header */}
-          <div className="bg-white border-b border-ctt-gray-100 px-8 py-4 flex-none">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-bold text-ctt-gray-900">{product?.name || productId}</h2>
+          <div className="bg-white border-b border-ctt-gray-100 px-4 sm:px-8 py-4 flex-none">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="font-bold text-ctt-gray-900 truncate">{product?.name || productId}</h2>
                 <div className="text-xs text-ctt-gray-400">{product?.owner} · {completeness}% completo</div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-wrap justify-end">
                 {/* Save status */}
-                <div className="text-xs text-ctt-gray-400">
-                  {saveStatus === 'saving' && <span className="text-amber-500">💾 A guardar...</span>}
-                  {saveStatus === 'saved' && <span className="text-emerald-600">✓ Guardado</span>}
-                  {saveStatus === 'error' && <span className="text-red-500">⚠ Erro ao guardar</span>}
-                </div>
+                {saveStatus === 'saving' && (
+                  <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded px-2 py-0.5">A guardar...</span>
+                )}
+                {saveStatus === 'saved' && (
+                  <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5">Guardado</span>
+                )}
+                {saveStatus === 'error' && (
+                  <span className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-0.5">Erro ao guardar</span>
+                )}
                 <Button size="sm" variant="secondary" onClick={handleManualSave} disabled={isSaving}>
                   Guardar
                 </Button>
                 {!isSubmitted ? (
                   <Button size="sm" variant="success" onClick={handleSubmit}>
-                    ✓ Marcar como submetido
+                    Marcar submetido
                   </Button>
                 ) : (
                   <Button size="sm" variant="ghost" onClick={() => updateProductStatus(sessionId, productId, 'draft').then(() => setProductData(p => ({ ...p, status: 'draft' })))}>
@@ -149,12 +159,12 @@ export function ProductForm() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 mt-4">
+            <div className="flex gap-1 mt-4 overflow-x-auto scrollbar-none -mx-1 px-1">
               {TABS.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                  className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded text-sm font-medium transition-all duration-150 whitespace-nowrap flex-none ${
                     activeTab === tab.id
                       ? 'bg-ctt-red text-white shadow-sm'
                       : 'text-ctt-gray-600 hover:bg-ctt-gray-100'
@@ -168,7 +178,7 @@ export function ProductForm() {
           </div>
 
           {/* Form content */}
-          <div className="flex-1 overflow-y-auto px-8 py-6">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
             <div className="max-w-3xl">
               {activeTab === 'northstar' && (
                 <NorthStarSection

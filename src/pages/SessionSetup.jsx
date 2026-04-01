@@ -45,9 +45,16 @@ export function SessionSetup() {
     ? ['B2B']
     : ['B2C', 'B2B'];
 
+  const validationErrors = {
+    name: !form.name ? 'Nome da sessão é obrigatório' : null,
+    period: !form.period ? 'Período é obrigatório' : null,
+    products: form.selectedProducts.length === 0 ? 'Seleciona pelo menos um produto' : null,
+  };
+  const hasErrors = Object.values(validationErrors).some(Boolean);
+
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.name || !form.period || form.selectedProducts.length === 0) return;
+    if (hasErrors) return;
     const session = await createSession({
       ...form,
       products: Object.fromEntries(form.selectedProducts.map(id => [id, { productId: id, status: 'draft' }]))
@@ -59,7 +66,7 @@ export function SessionSetup() {
 
   return (
     <div className="flex-1 bg-ctt-gray-50 overflow-y-auto">
-      <div className="max-w-3xl mx-auto px-8 py-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-8 py-8 sm:py-10">
         <div className="mb-8">
           <div className="text-xs font-semibold text-ctt-gray-400 uppercase tracking-wide mb-1">Nova Sessão</div>
           <h1 className="text-3xl font-bold text-ctt-gray-900">Configurar sessão</h1>
@@ -82,7 +89,7 @@ export function SessionSetup() {
               onChange={v => update('name', v)}
               placeholder='ex: Digital 360 — Estado da Arte 1T2025'
             />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Select
                 label="Período"
                 required
@@ -166,14 +173,22 @@ export function SessionSetup() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <Button variant="secondary" type="button" onClick={() => navigate('/')}>Cancelar</Button>
-            <Button
-              type="submit"
-              disabled={!form.name || !form.period || form.selectedProducts.length === 0 || loading}
-            >
-              {loading ? 'A criar...' : `Criar sessão com ${form.selectedProducts.length} produto${form.selectedProducts.length !== 1 ? 's' : ''}`}
-            </Button>
+          <div className="space-y-3 pt-2">
+            {hasErrors && (form.name !== undefined) && (
+              <ul className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 space-y-1">
+                {Object.values(validationErrors).filter(Boolean).map((msg, i) => (
+                  <li key={i}>• {msg}</li>
+                ))}
+              </ul>
+            )}
+            <div className="flex items-center justify-between">
+              <Button variant="secondary" type="button" onClick={() => navigate('/')}>Cancelar</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? 'A criar...' : form.selectedProducts.length > 0
+                  ? `Criar sessão com ${form.selectedProducts.length} produto${form.selectedProducts.length !== 1 ? 's' : ''}`
+                  : 'Criar sessão'}
+              </Button>
+            </div>
           </div>
         </form>
       </div>
